@@ -8,7 +8,6 @@ from ui.main_menu import MainMenu
 
 
 class TraceDSA:
-
     def __init__(self, root):
         self.root = root
         self.root.title("Trace | Data Structures & Algorithms")
@@ -29,10 +28,12 @@ class TraceDSA:
         self.current_screen = None
         self.show_main_menu()
 
+
     def clear_screen(self):
         if self.current_screen is not None:
             self.current_screen.destroy()
             self.current_screen = None
+
 
     def show_main_menu(self):
         self.clear_screen()
@@ -41,6 +42,7 @@ class TraceDSA:
             self.root,
             self.show_module
         )
+
 
     def show_module(self, module_name):
         self.clear_screen()
@@ -84,6 +86,16 @@ class TraceDSA:
         )
 
         back_button.pack(pady=30)
+
+        footer = tk.Label(
+            screen,
+            text="TRACE | DATA STRUCTURES & ALGORITHMS",
+            font=theme.FONT_FOOTER,
+            fg=theme.MUTED,
+            bg=theme.BACKGROUND
+        )
+
+        footer.pack(side="bottom", pady=20)
 
         self.current_screen = screen
 
