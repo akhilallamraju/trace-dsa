@@ -6,6 +6,8 @@ import theme
 
 
 class SearchingMenu(tk.Frame):
+    """Display available searching algorithms using the main-menu button style."""
+
     def __init__(self, parent, select_callback, back_callback):
         super().__init__(parent, bg=theme.BACKGROUND)
         self.select_callback = select_callback
@@ -14,84 +16,101 @@ class SearchingMenu(tk.Frame):
 
     def _build_ui(self):
         tk.Button(
-            self, text="← Back to Main Menu", command=self.back_callback,
-            font=theme.FONT_SUBTITLE, fg=theme.CYAN, bg=theme.BACKGROUND,
-            activebackground=theme.BACKGROUND, activeforeground=theme.FOREGROUND,
-            relief="flat", bd=0, cursor="hand2",
+            self,
+            text="← Back to Main Menu",
+            command=self.back_callback,
+            font=theme.FONT_SUBTITLE,
+            fg=theme.CYAN,
+            bg=theme.BACKGROUND,
+            activebackground=theme.BACKGROUND,
+            activeforeground=theme.FOREGROUND,
+            relief="flat",
+            bd=0,
+            cursor="hand2",
         ).pack(anchor="w", padx=32, pady=(24, 0))
 
         content = tk.Frame(self, bg=theme.BACKGROUND)
         content.place(relx=0.5, rely=0.47, anchor="center")
 
         tk.Label(
-            content, text="Searching", font=theme.FONT_TITLE,
-            fg=theme.GREEN, bg=theme.BACKGROUND,
+            content,
+            text="Searching",
+            font=theme.FONT_TITLE,
+            fg=theme.GREEN,
+            bg=theme.BACKGROUND,
         ).pack(pady=(0, 8))
 
         tk.Label(
-            content, text="Choose an algorithm to explore.",
-            font=theme.FONT_SUBTITLE, fg=theme.MUTED, bg=theme.BACKGROUND,
+            content,
+            text="Choose an algorithm to explore.",
+            font=theme.FONT_SUBTITLE,
+            fg=theme.MUTED,
+            bg=theme.BACKGROUND,
         ).pack(pady=(0, 34))
 
-        cards = tk.Frame(content, bg=theme.BACKGROUND)
-        cards.pack()
+        buttons = tk.Frame(content, bg=theme.BACKGROUND)
+        buttons.pack()
 
-        self._algorithm_card(
-            cards, column=0, name="LINEAR SEARCH",
+        self._algorithm_button(
+            buttons,
+            column=0,
+            number="01",
+            name="LINEAR SEARCH",
             description="Check each element one by one.",
-            number="01", accent=theme.CYAN, status="AVAILABLE",
-            callback=lambda: self.select_callback("LINEAR"),
+            status="AVAILABLE",
+            accent=theme.CYAN,
+            algorithm="LINEAR",
         )
-        self._algorithm_card(
-            cards, column=1, name="BINARY SEARCH",
+        self._algorithm_button(
+            buttons,
+            column=1,
+            number="02",
+            name="BINARY SEARCH",
             description="Repeatedly halve a sorted search range.",
-            number="02", accent=theme.PURPLE, status="COMING SOON",
-            callback=lambda: self.select_callback("BINARY"),
+            status="COMING SOON",
+            accent=theme.PURPLE,
+            algorithm="BINARY",
         )
 
         tk.Label(
-            self, text="TRACE | DATA STRUCTURES & ALGORITHMS",
-            font=theme.FONT_FOOTER, fg=theme.MUTED, bg=theme.BACKGROUND,
+            self,
+            text="TRACE | DATA STRUCTURES & ALGORITHMS",
+            font=theme.FONT_FOOTER,
+            fg=theme.MUTED,
+            bg=theme.BACKGROUND,
         ).pack(side="bottom", pady=20)
 
-    def _algorithm_card(self, parent, column, name, description, number,
-                        accent, status, callback):
-        card = tk.Frame(
-            parent, bg=theme.SURFACE, width=270, height=220,
-            highlightthickness=1, highlightbackground=theme.MUTED,
-        )
-        card.grid(row=0, column=column, padx=14)
-        card.pack_propagate(False)
-
-        number_label = tk.Label(
-            card, text=number, font=theme.FONT_BUTTON_NUMBER,
-            fg=accent, bg=theme.SURFACE,
-        )
-        number_label.pack(pady=(24, 12))
-
-        title = tk.Label(
-            card, text=name, font=theme.FONT_BUTTON_TITLE,
-            fg=theme.FOREGROUND, bg=theme.SURFACE,
-        )
-        title.pack(pady=(0, 10))
-
-        detail = tk.Label(
-            card, text=description, font=theme.FONT_BUTTON_DESCRIPTION,
-            fg=theme.MUTED, bg=theme.SURFACE, wraplength=220,
+    def _algorithm_button(
+        self, parent, column, number, name, description, status, accent, algorithm
+    ):
+        button = tk.Button(
+            parent,
+            text=f"{number}\n\n{name}\n\n{description}\n\n{status}",
+            font=theme.FONT_BUTTON_TITLE,
+            fg=theme.FOREGROUND,
+            bg=theme.SURFACE,
+            activeforeground=accent,
+            activebackground=theme.SURFACE_HOVER,
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            width=27,
+            height=8,
+            wraplength=270,
             justify="center",
+            command=lambda: self.select_callback(algorithm),
         )
-        detail.pack(pady=(0, 18))
+        button.grid(row=0, column=column, padx=14)
 
-        status_label = tk.Label(
-            card, text=status, font=theme.FONT_BUTTON_NUMBER,
-            fg=accent, bg=theme.SURFACE,
+        # Match the main menu: change the button itself on Enter/Leave.
+        # A single widget avoids child-label background gaps and flicker.
+        button.bind(
+            "<Enter>",
+            lambda _event, b=button, colour=accent:
+                b.config(bg=theme.SURFACE_HOVER, fg=colour),
         )
-        status_label.pack()
-
-        for widget in (card, number_label, title, detail, status_label):
-            widget.bind("<Enter>", lambda _event, c=card, a=accent:
-                        c.configure(bg=theme.SURFACE_HOVER))
-            widget.bind("<Leave>", lambda _event, c=card:
-                        c.configure(bg=theme.SURFACE))
-            widget.bind("<Button-1>", lambda _event, action=callback: action())
-            widget.configure(cursor="hand2")
+        button.bind(
+            "<Leave>",
+            lambda _event, b=button:
+                b.config(bg=theme.SURFACE, fg=theme.FOREGROUND),
+        )
