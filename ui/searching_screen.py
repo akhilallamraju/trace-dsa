@@ -20,6 +20,7 @@ class SearchingScreen(tk.Frame):
     SUBTITLE = "Check each element in sequence until the target is found."
     VISUALISER_CLASS = ArrayVisualiser
     SORT_VALUES = False
+    HEADING_COLOUR = theme.CYAN
 
     def __init__(self, parent, back_callback):
         super().__init__(parent, bg=theme.BACKGROUND)
@@ -60,7 +61,7 @@ class SearchingScreen(tk.Frame):
             heading,
             text=self.TITLE,
             font=theme.FONT_TITLE,
-            fg=theme.CYAN,
+            fg=self.HEADING_COLOUR,
             bg=theme.BACKGROUND,
         ).pack(anchor="w")
 
