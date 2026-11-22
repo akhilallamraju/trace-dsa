@@ -16,6 +16,11 @@ class SearchingScreen(tk.Frame):
     MIN_VALUE = 1
     MAX_VALUE = 99
     ANIMATION_DELAY_MS = 650
+    TITLE = "Linear Search"
+    SUBTITLE = "Check each element in sequence until the target is found."
+    VISUALISER_CLASS = ArrayVisualiser
+    SORT_VALUES = False
+    HEADING_COLOUR = theme.CYAN
 
     def __init__(self, parent, back_callback):
         super().__init__(parent, bg=theme.BACKGROUND)
@@ -54,21 +59,21 @@ class SearchingScreen(tk.Frame):
 
         tk.Label(
             heading,
-            text="Linear Search",
+            text=self.TITLE,
             font=theme.FONT_TITLE,
-            fg=theme.CYAN,
+            fg=self.HEADING_COLOUR,
             bg=theme.BACKGROUND,
         ).pack(anchor="w")
 
         tk.Label(
             heading,
-            text="Check each element in sequence until the target is found.",
+            text=self.SUBTITLE,
             font=theme.FONT_SUBTITLE,
             fg=theme.MUTED,
             bg=theme.BACKGROUND,
         ).pack(anchor="w", pady=(2, 0))
 
-        self.visualiser = ArrayVisualiser(self, height=175)
+        self.visualiser = self.VISUALISER_CLASS(self, height=175)
         self.visualiser.pack(fill="x", padx=theme.PADDING, pady=(0, 12))
 
         controls = tk.Frame(self, bg=theme.BACKGROUND)
@@ -233,6 +238,8 @@ class SearchingScreen(tk.Frame):
             random.randint(self.MIN_VALUE, self.MAX_VALUE)
             for _ in range(self.ARRAY_SIZE)
         ]
+        if self.SORT_VALUES:
+            self.values.sort()
         self.visualiser.set_values(self.values)
         self.target_entry.delete(0, tk.END)
         self._set_stat(self.comparisons_value, 0)
@@ -275,10 +282,13 @@ class SearchingScreen(tk.Frame):
             fg=theme.CYAN,
         )
 
-        self.search_generator = linear_search_steps(self.values, target)
+        self.search_generator = self._create_search_generator(target)
         self.is_running = True
         self._set_controls_running(True)
         self.after_id = self.after(250, self._advance_search)
+
+    def _create_search_generator(self, target):
+        return linear_search_steps(self.values, target)
 
     def _advance_search(self):
         """Consume one algorithm state and schedule the next animation frame."""
@@ -292,14 +302,21 @@ class SearchingScreen(tk.Frame):
             self._finish_search_without_result()
             return
 
-        self.visualiser.render(
-            current_index=step.current_index,
-            found_index=step.found_index,
-        )
+        current_index = getattr(step, "current_index", getattr(step, "mid", None))
+        if hasattr(step, "mid"):
+            self.visualiser.render_range(
+                low=step.low, high=step.high, mid=step.mid,
+                found_index=step.found_index,
+            )
+        else:
+            self.visualiser.render(
+                current_index=current_index,
+                found_index=step.found_index,
+            )
         self._set_stat(self.comparisons_value, step.comparisons)
         self._set_stat(
             self.index_value,
-            step.current_index if step.current_index is not None else "—",
+            current_index if current_index is not None else "—",
         )
 
         if step.complete:
@@ -307,8 +324,12 @@ class SearchingScreen(tk.Frame):
             return
 
         self.status_label.configure(
-            text=f"Checking index {step.current_index}: "
-                 f"{self.values[step.current_index]} does not match.",
+            text=(
+                f"Checking index {current_index}: "
+                f"{self.values[current_index]} does not match."
+                if current_index is not None
+                else "No elements to compare."
+            ),
             fg=theme.ORANGE,
         )
         self.after_id = self.after(

@@ -6,6 +6,7 @@ import theme
 from ui.main_menu import MainMenu
 from ui.searching_menu import SearchingMenu
 from ui.searching_screen import SearchingScreen
+from ui.binary_searching_screen import BinarySearchingScreen
 
 
 class TraceDSA:
@@ -80,50 +81,14 @@ class TraceDSA:
             return
 
         if algorithm_name == "BINARY":
-            self._show_binary_search_placeholder()
+            self.clear_screen()
+            self.current_screen = BinarySearchingScreen(
+                self.root, back_callback=self.show_searching_menu,
+            )
+            self.current_screen.pack(fill="both", expand=True)
             return
 
         self.show_searching_menu()
-
-    def _show_binary_search_placeholder(self):
-        self.clear_screen()
-        screen = tk.Frame(self.root, bg=theme.BACKGROUND)
-        screen.pack(fill="both", expand=True)
-
-        tk.Button(
-            screen, text="← Back to Searching",
-            font=theme.FONT_SUBTITLE, fg=theme.CYAN,
-            bg=theme.BACKGROUND, activebackground=theme.BACKGROUND,
-            activeforeground=theme.FOREGROUND, relief="flat", bd=0,
-            cursor="hand2", command=self.show_searching_menu,
-        ).pack(anchor="w", padx=32, pady=(24, 0))
-
-        tk.Label(
-            screen, text="Binary Search", font=theme.FONT_TITLE,
-            fg=theme.PURPLE, bg=theme.BACKGROUND,
-        ).pack(pady=(100, 12))
-
-        tk.Label(
-            screen, text="COMING SOON", font=theme.FONT_BUTTON_TITLE,
-            fg=theme.PURPLE, bg=theme.BACKGROUND,
-        ).pack(pady=8)
-
-        tk.Label(
-            screen,
-            text=("Binary Search will be added in a future update. "
-                  "It will work on sorted arrays by repeatedly halving "
-                  "the search range."),
-            font=theme.FONT_SUBTITLE, fg=theme.MUTED,
-            bg=theme.BACKGROUND, wraplength=520, justify="center",
-        ).pack(pady=12)
-
-        tk.Label(
-            screen, text="TRACE | DATA STRUCTURES & ALGORITHMS",
-            font=theme.FONT_FOOTER, fg=theme.MUTED, bg=theme.BACKGROUND,
-        ).pack(side="bottom", pady=20)
-
-        self.current_screen = screen
-
 
 if __name__ == "__main__":
     root = tk.Tk()
