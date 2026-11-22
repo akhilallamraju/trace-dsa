@@ -14,6 +14,7 @@ class BinarySearchingScreen(SearchingScreen):
     SUBTITLE = "Repeatedly halve the sorted search range."
     VISUALISER_CLASS = BinarySearchVisualiser
     SORT_VALUES = True
+    HEADING_COLOUR = theme.PURPLE
 
     def _create_search_generator(self, target):
         return binary_search_steps(self.values, target)
