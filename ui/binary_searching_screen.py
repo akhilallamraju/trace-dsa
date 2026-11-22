@@ -1,5 +1,7 @@
 """Interactive Binary Search screen for Trace."""
 
+import theme
+
 from algorithms.searching.binary_search import binary_search_steps
 from ui.searching_screen import SearchingScreen
 from visualisation.binary_search_visualiser import BinarySearchVisualiser
@@ -44,18 +46,18 @@ class BinarySearchingScreen(SearchingScreen):
             self._finish_search(step.found_index, step.comparisons)
             return
 
+        target = int(self.target_entry.get())
+        if self.values[step.mid] < target:
+            next_low, next_high = step.mid + 1, step.high
+        else:
+            next_low, next_high = step.low, step.mid - 1
         self.status_label.configure(
             text=(
                 f"Checking midpoint at index {step.mid}: "
                 f"{self.values[step.mid]}. "
-                f"Next search range: "
-                f"{step.mid + 1}–{step.high if step.mid < step.high else step.high}"
-                if self.values[step.mid] < int(self.target_entry.get())
-                else f"Checking midpoint at index {step.mid}: "
-                     f"{self.values[step.mid]}. "
-                     f"Next search range: {step.low}–{step.mid - 1}"
+                f"Next search range: {next_low}–{next_high}."
             ),
-            fg=__import__("theme").ORANGE,
+            fg=theme.ORANGE,
         )
         self.after_id = self.after(
             self.ANIMATION_DELAY_MS, self._advance_search
