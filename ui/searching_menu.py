@@ -68,7 +68,7 @@ class SearchingMenu(tk.Frame):
             description="Repeatedly halve a sorted search range.",
             number="02",
             accent=theme.PURPLE,
-            status="COMING SOON",
+            status="AVAILABLE",
             algorithm="BINARY",
         )
 
