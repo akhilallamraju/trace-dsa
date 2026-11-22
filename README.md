@@ -161,7 +161,7 @@ The project is being built incrementally, with an emphasis on:
 - [x] Create the application window and main menu.
 - [x] Implement navigation between the three modules.
 - [x] Implement and visualise Linear Search.
-- [ ] Implement and visualise Binary Search.
+- [x] Implement and visualise Binary Search.
 - [ ] Implement and visualise the initial sorting algorithms.
 - [ ] Generate and display binary trees.
 - [ ] Implement BFS and DFS traversals.
